@@ -7,5 +7,5 @@ const schema = z.object({
     notifyAt: z.string().datetime().nullable().optional(),
 });
 
-export type objectiveSchema = z.infer<typeof schema>;
-export const objectiveFSchema: FastifySchema = { body: schema };
+export type createObjectiveSchema = z.infer<typeof schema>;
+export const createObjectiveFSchema: FastifySchema = { body: schema };
