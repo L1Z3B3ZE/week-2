@@ -10,7 +10,7 @@ export async function up(db: Kysely<any>) {
         .addColumn("notifyAt", "timestamp")
         .addColumn("createdAt", "timestamp", (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn("updatedAt", "timestamp", (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn("is_completed", "boolean", (col) => col.notNull())
+        .addColumn("isСompleted", "boolean", (col) => col.notNull().defaultTo(false))
         .execute();
 }
 

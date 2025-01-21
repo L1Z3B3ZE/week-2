@@ -4,6 +4,7 @@
  */
 
 import type { ColumnType } from "kysely";
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
@@ -22,10 +23,10 @@ export interface Objectives {
   title: string;
   description: string | null;
   creatorid: string;
-  notifyAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-  is_completed: boolean;
+  notifyAt: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
+  isCompleted: Generated<boolean>;
 }
 
 export interface UserObjectiveShares {
