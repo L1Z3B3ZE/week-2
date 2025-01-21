@@ -4,8 +4,7 @@ import { z } from "zod";
 const schema = z.object({
     title: z.string().min(1).max(127),
     description: z.string(),
-    notifyAt: z.string().datetime().nullable(),
-    isCompleted: z.boolean()
+    notifyAt: z.string().datetime().nullable().optional(),
 });
 
 export type objectiveSchema = z.infer<typeof schema>;

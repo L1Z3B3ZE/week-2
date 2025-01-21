@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { sqlCon } from "../../common/config/kysely-config";
 import { HttpStatusCode } from "../../common/enum/http-status-code";
 import * as objectiveRepository from "./repository.objective";
-import type { objectiveSchema } from "./schemas/objective.schema";
+import type { objectiveSchema } from "./schemas/create-objective.schema";
 
 export async function create(req: FastifyRequest<{ Body: objectiveSchema }>, rep: FastifyReply) {
     if (!req.user?.id) {
@@ -16,7 +16,6 @@ export async function create(req: FastifyRequest<{ Body: objectiveSchema }>, rep
         description: req.body.description,
         notifyAt: req.body.notifyAt,
         creatorid: req.user.id,
-        isCompleted: req.body.isCompleted
     };
 
     try {
