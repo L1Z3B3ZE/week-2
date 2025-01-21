@@ -10,12 +10,34 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   : ColumnType<T, T | undefined, T>;
 
 export interface Users {
-  email: string;
   id: Generated<string>;
-  name: string | null;
-  password: string | null;
+  login: string;
+  password: string;
+  name: string;
+  email: string;
 }
+
+export interface Objectives {
+  id: Generated<string>;
+  title: string;
+  description: string | null;
+  creatorid: string;
+  notifyAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  is_completed: boolean;
+}
+
+export interface UserObjectiveShares {
+  id: Generated<string>;
+  userId: string;
+  objectiveId: string;
+}
+
+
 
 export interface DB {
   users: Users;
+  objectives: Objectives;
+  userObjectiveShares: UserObjectiveShares;
 }
