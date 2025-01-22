@@ -3,7 +3,8 @@ import { sqlCon } from "../../common/config/kysely-config";
 import { HttpStatusCode } from "../../common/enum/http-status-code";
 import * as objectiveRepository from "./repository.objective";
 import type { createObjectiveSchema } from "./schemas/create-objective.schema";
-import type { updateObjectiveSchema } from "./schemas/update-objective.schema";
+import { updateObjectiveSchema } from "./schemas/update-objective.schema";
+import { getAllObjectivesSchema } from "./schemas/get-all-objectives.schema";
 
 export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }>, rep: FastifyReply) {
     if (!req.user?.id) {
@@ -69,6 +70,35 @@ export async function getOne(req: FastifyRequest<{ Params: { id: string } }>, re
     } catch (error) {
         return rep.code(HttpStatusCode.NOT_FOUND).send({
             message: "Задача с таким ID не найдена"
+        });
+    }
+}
+
+export async function getAll(
+    req: FastifyRequest<{ Querystring: getAllObjectivesSchema }>, // Параметры запроса
+    rep: FastifyReply
+) {
+
+    if (!req.user?.id) {
+        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
+            message: "Пользователь не авторизован"
+        });
+    }
+
+    const filters = req.query;
+
+    try {
+        const objectives = await objectiveRepository.getAll(
+            sqlCon,
+            req.user.id, // ID пользователя для фильтрации задач
+            filters // Применяем фильтры из запроса
+        );
+
+        return rep.code(HttpStatusCode.OK).send(objectives);
+    } catch (error) {
+        console.error("Ошибка при получении списка задач:", error);
+        return rep.code(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
+            message: "Произошла ошибка при получении задач"
         });
     }
 }
