@@ -16,3 +16,7 @@ export async function update(con: Kysely<DB> | Transaction<DB>, id: string, sche
         .where("id", "=", id)
         .executeTakeFirst();
 }
+
+export async function getById(con: Kysely<DB> | Transaction<DB>, id: string) {
+    return await con.selectFrom("objectives").selectAll().where("id", "=", id).executeTakeFirstOrThrow();
+}

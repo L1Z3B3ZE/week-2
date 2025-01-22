@@ -48,3 +48,27 @@ export async function update(req: FastifyRequest<{ Body: updateObjectiveSchema; 
         });
     }
 }
+
+export async function getOne(req: FastifyRequest<{ Params: { id: string } }>, rep: FastifyReply) {
+    if (!req.user?.id) {
+        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
+            message: "Пользователь не авторизован"
+        });
+    }
+
+    try {
+        const objective = await objectiveRepository.getById(sqlCon, req.params.id);
+
+        if (objective.creatorid !== req.user.id) {
+            return rep.code(HttpStatusCode.FORBIDDEN).send({
+                message: "У вас нет доступа к этой задаче"
+            });
+        }
+
+        return rep.code(HttpStatusCode.OK).send(objective);
+    } catch (error) {
+        return rep.code(HttpStatusCode.NOT_FOUND).send({
+            message: "Задача с таким ID не найдена"
+        });
+    }
+}
