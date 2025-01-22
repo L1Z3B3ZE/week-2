@@ -16,7 +16,7 @@ export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }
         title: req.body.title,
         description: req.body.description,
         notifyAt: req.body.notifyAt,
-        creatorid: req.user.id,
+        creatorid: req.user.id
     };
 
     try {
@@ -30,32 +30,21 @@ export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }
     }
 }
 
-export async function update(
-    request: FastifyRequest<{
-        Params: { id: string };
-        Body: updateObjectiveSchema;
-    }>,
-    reply: FastifyReply
-) {
-    const { id } = request.params;
+export async function update(req: FastifyRequest<{ Body: updateObjectiveSchema; Params: { id: string } }>, rep: FastifyReply) {
+    const { id } = req.params;
+    if (!req.user?.id) {
+        return rep.code(HttpStatusCode.BAD_REQUEST).send({
+            message: "Пользователь не авторизован"
+        });
+    }
 
-
+    const updatedObjective = await objectiveRepository.update(sqlCon, id, req.body);
     try {
-        const objective = await objectiveRepository.getById(sqlCon, id);
-        if (!objective) {
-            reply.status(404);
-            return { error: "Objective not found" };
-        }
-
-        const updatedObjective = await objectiveRepository.update(//code here);
-
-        return {
-            message: "Objective updated successfully",
-            data: updatedObjective,
-        };
+        return rep.code(HttpStatusCode.OK).send({ ...updatedObjective });
     } catch (error) {
-        request.log.error(error);
-        reply.status(500);
-        return { error: "An error occurred while updating the objective" };
+        console.error("Ошибка при редактировании задачи:", error);
+        return rep.code(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
+            message: "Произошла ошибка при редактировании задачи"
+        });
     }
 }

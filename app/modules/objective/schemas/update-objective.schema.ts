@@ -2,9 +2,9 @@ import type { FastifySchema } from "fastify";
 import { z } from "zod";
 
 const schema = z.object({
-    title: z.string().min(1).max(127),
-    description: z.string(),
-    notifyAt: z.string().datetime(),
+    title: z.string().min(1).max(127).optional(),
+    description: z.string().nullable().optional(),
+    notifyAt: z.string().datetime().optional(),
     isCompleted: z.boolean().optional()
 });
 
