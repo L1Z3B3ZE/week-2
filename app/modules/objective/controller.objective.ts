@@ -8,7 +8,7 @@ import { getAllObjectivesSchema } from "./schemas/get-all-objectives.schema";
 
 export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }>, rep: FastifyReply) {
     if (!req.user?.id) {
-        return rep.code(HttpStatusCode.BAD_REQUEST).send({
+        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
             message: "Пользователь не авторизован"
         });
     }
@@ -22,7 +22,7 @@ export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }
 
     try {
         const insertedObjective = await objectiveRepository.insert(sqlCon, newObjective);
-        return rep.code(HttpStatusCode.CREATED).send(insertedObjective);
+        return rep.code(HttpStatusCode.OK).send(insertedObjective);
     } catch (error) {
         console.error("Ошибка создания задачи:", error);
         return rep.code(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
@@ -34,7 +34,7 @@ export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }
 export async function update(req: FastifyRequest<{ Body: updateObjectiveSchema; Params: { id: string } }>, rep: FastifyReply) {
     const { id } = req.params;
     if (!req.user?.id) {
-        return rep.code(HttpStatusCode.BAD_REQUEST).send({
+        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
             message: "Пользователь не авторизован"
         });
     }
@@ -74,25 +74,15 @@ export async function getOne(req: FastifyRequest<{ Params: { id: string } }>, re
     }
 }
 
-export async function getAll(
-    req: FastifyRequest<{ Querystring: getAllObjectivesSchema }>, // Параметры запроса
-    rep: FastifyReply
-) {
-
+export async function getAll(req: FastifyRequest<{ Querystring: getAllObjectivesSchema }>, rep: FastifyReply) {
     if (!req.user?.id) {
         return rep.code(HttpStatusCode.UNAUTHORIZED).send({
             message: "Пользователь не авторизован"
         });
     }
 
-    const filters = req.query;
-
     try {
-        const objectives = await objectiveRepository.getAll(
-            sqlCon,
-            req.user.id, // ID пользователя для фильтрации задач
-            filters // Применяем фильтры из запроса
-        );
+        const objectives = await objectiveRepository.getAll(sqlCon, req.user.id, req.query);
 
         return rep.code(HttpStatusCode.OK).send(objectives);
     } catch (error) {
