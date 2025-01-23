@@ -1,0 +1,65 @@
+/to-do:
+  post:
+    tags:
+      - Objectives
+    summary: Create a new objective
+    description: Creating a new objective
+    security:
+      - bearer: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [title]
+            properties:
+              title:
+                type: string
+                example: "title"
+              description:
+                type: string
+                example: "description"
+              notifyAt:
+                type: string
+                format: date-time
+                example: "2025-01-25T15:00:00Z"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 127
+                description:
+                  type: string
+                notifyAt:
+                  type: string
+                  format: date-time
+                creatorId:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                isCompleted:
+                  type: boolean
+                  default: false
+      404:
+        $ref: "#/definitions/404"
+      422:
+        $ref: "#/definitions/422"
+      401:
+        $ref: "#/definitions/401"
+      403:
+        $ref: "#/definitions/403"
