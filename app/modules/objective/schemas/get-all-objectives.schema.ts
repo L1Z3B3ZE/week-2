@@ -14,8 +14,8 @@ const schema = z.object({
     sortCreatedAt: SortOrders.optional(),
     sortNotifyAt: SortOrders.optional(),
     order: SortOrders.optional(),
-    limit: z.number().optional(),
-    offset: z.number().optional(),
+    limit: z.preprocess((value) => (typeof value === "string" ? parseInt(value, 10) : value), z.number().optional()),
+    offset: z.preprocess((value) => (typeof value === "string" ? parseInt(value, 10) : value), z.number().optional()),
 });
 
 export type getAllObjectivesSchema = z.infer<typeof schema>;

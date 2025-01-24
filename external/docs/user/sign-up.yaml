@@ -15,12 +15,19 @@
               email:
                 type: string
                 format: email
+                minLength: 1
+                maxLength: 127
               password:
                 type: string
+                minLength: 6
               login:
                 type: string
+                minLength: 1
+                maxLength: 127
               name:
                 type: string
+                minLength: 1
+                maxLength: 12
     responses:
       200:
         description: OK
