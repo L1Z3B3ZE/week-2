@@ -1,0 +1,66 @@
+/to-do:
+    get:
+      tags:
+        - Objectives
+      summary: Get all user's objectives
+      security:
+        - bearer: [ ]
+      parameters:
+        - name: sortCreatedAt
+          $ref: "#/definitions/sortCreatedAt"
+        - name: sortNotifyAt
+          $ref: "#/definitions/sortNotifyAt"
+        - name: sortTitle
+          $ref: "#/definitions/sortTitle"
+        - name: search
+          in: query
+          description: Search term to filter objectives by title
+          required: false
+          schema:
+            type: string
+        - name: isCompleted
+          in: query
+          description: Filter tasks by their completion status
+          required: false
+          schema:
+            type: boolean
+        - $ref: "#/definitions/pagination/limit"
+        - $ref: "#/definitions/pagination/offset"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                      minLength: 1
+                      maxLength: 127
+                    description:
+                      type: string
+                    creatorId:
+                      type: string
+                    notifyAt:
+                      type: string
+                      format: date-time
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+                    isCompleted:
+                      type: boolean
+                      default: false
+        404:
+          $ref: "#/definitions/404"
+        401:
+          $ref: "#/definitions/401"
+        403:
+          $ref: "#/definitions/403"

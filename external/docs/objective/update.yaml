@@ -1,0 +1,69 @@
+/to-do/{id}:
+  patch:
+    tags:
+      - Objectives
+    summary: Update objective
+    description: Update the parameters of an existing objective
+    security:
+      - bearer: []
+    parameters:
+      - $ref: "#/definitions/uuid-param"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ title ]
+            properties:
+              title:
+                type: string
+                example: Update title
+              description:
+                type: string
+                example: Update description
+              notifyAt:
+                type: string
+                format: date-time
+                example: "2025-01-30T15:55:30Z"
+              isCompleted:
+                type: boolean
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 127
+                description:
+                  type: string
+                notifyAt:
+                  type: string
+                  format: date-time
+                creatorId:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                isCompleted:
+                  type: boolean
+                  default: false
+      404:
+        $ref: "#/definitions/404"
+      422:
+        $ref: "#/definitions/422"
+      401:
+        $ref: "#/definitions/401"
+      403:
+        $ref: "#/definitions/403"

@@ -1,0 +1,45 @@
+/to-do/{id}:
+  get:
+    tags:
+      - Objectives
+    summary: Get one objective
+    security:
+      - bearer: [ ]
+    parameters:
+      - $ref: "#/definitions/uuid-param"
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 127
+                description:
+                  type: string
+                creatorId:
+                  type: string
+                notifyAt:
+                  type: string
+                  format: date-time
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                isCompleted:
+                  type: boolean
+                  default: false
+      404:
+        $ref: "#/definitions/404"
+      401:
+        $ref: "#/definitions/401"
+      403:
+        $ref: "#/definitions/403"
