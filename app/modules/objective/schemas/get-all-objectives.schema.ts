@@ -1,12 +1,15 @@
 import type { FastifySchema } from "fastify";
 import { z } from "zod";
 
-// Схема для параметров фильтрации и сортировки
 const SortOrders = z.enum(["asc", "desc"]);
 
 const schema = z.object({
     search: z.string().optional(),
-    isCompleted: z.boolean().optional(),
+    isCompleted: z.preprocess((value) => {
+        if (value === "true") return true;
+        if (value === "false") return false;
+        return undefined;
+    }, z.boolean().optional()),
     sortTitle: SortOrders.optional(),
     sortCreatedAt: SortOrders.optional(),
     sortNotifyAt: SortOrders.optional(),
