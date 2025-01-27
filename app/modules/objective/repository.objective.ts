@@ -1,6 +1,5 @@
-import { type Insertable, type Kysely, Transaction } from "kysely";
+import { type Insertable, type Kysely, Transaction, type Updateable } from "kysely";
 import { DB, Objectives } from "../../common/types/kysely/db.type";
-import { updateObjectiveSchema } from "./schemas/update-objective.schema";
 import { getAllObjectivesSchema } from "./schemas/get-all-objectives.schema";
 
 type InsertableObjectiveRowType = Insertable<Objectives>;
@@ -9,11 +8,11 @@ export async function insert(con: Kysely<DB> | Transaction<DB>, entity: Insertab
     return await con.insertInto("objectives").returningAll().values(entity).executeTakeFirstOrThrow();
 }
 
-export async function update(con: Kysely<DB> | Transaction<DB>, id: string, schema: updateObjectiveSchema) {
+export async function update(con: Kysely<DB> | Transaction<DB>, id: string, entity: Updateable<Objectives>) {
     return await con
         .updateTable("objectives")
         .returningAll()
-        .set({ ...schema, updatedAt: `now()` })
+        .set({ ...entity, updatedAt: `now()` })
         .where("id", "=", id)
         .executeTakeFirst();
 }
@@ -23,7 +22,6 @@ export async function getById(con: Kysely<DB> | Transaction<DB>, id: string) {
 }
 
 export async function getAll(con: Kysely<DB> | Transaction<DB>, userId: string, filters: getAllObjectivesSchema) {
-
     let query = con.selectFrom("objectives").selectAll().where("creatorid", "=", userId);
 
     query = query
