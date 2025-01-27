@@ -23,3 +23,19 @@ definitions:
     schema:
       type: string
       enum: [ "asc", "desc" ]
+  sortBy:
+    name: sortBy
+    in: query
+    description: Sort objectives by the specified field (createdAt, title, notifyAt)
+    required: false
+    schema:
+      type: string
+      enum: [ "createdAt", "title", "notifyAt" ]
+  sortOrder:
+    name: sortOrder
+    in: query
+    description: Sort order (asc or desc)
+    required: false
+    schema:
+      type: string
+      enum: [ "asc", "desc" ]

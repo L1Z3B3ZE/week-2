@@ -3,8 +3,8 @@ import { sqlCon } from "../../common/config/kysely-config";
 import { HttpStatusCode } from "../../common/enum/http-status-code";
 import * as objectiveRepository from "./repository.objective";
 import type { createObjectiveSchema } from "./schemas/create-objective.schema";
-import { updateObjectiveSchema } from "./schemas/update-objective.schema";
 import { getAllObjectivesSchema } from "./schemas/get-all-objectives.schema";
+import { updateObjectiveSchema } from "./schemas/update-objective.schema";
 import { uuidObjectiveSchema } from "./schemas/validUUID.schema";
 
 export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }>, rep: FastifyReply) {

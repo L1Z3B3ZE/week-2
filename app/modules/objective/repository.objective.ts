@@ -24,14 +24,19 @@ export async function getById(con: Kysely<DB> | Transaction<DB>, id: string) {
 export async function getAll(con: Kysely<DB> | Transaction<DB>, userId: string, filters: getAllObjectivesSchema) {
     let query = con.selectFrom("objectives").selectAll().where("creatorid", "=", userId);
 
-    query = query
-        .$if(!!filters.search, (q) => q.where("title", "ilike", `%${filters.search as string}%`))
-        .$if(typeof filters.isCompleted === "boolean", (q) => q.where("isCompleted", "=", filters.isCompleted as boolean))
-        .$if(!!filters.sortTitle, (q) => q.orderBy("title", filters.sortTitle as "asc" | "desc"))
-        .$if(!!filters.sortCreatedAt, (q) => q.orderBy("createdAt", filters.sortCreatedAt as "asc" | "desc"))
-        .$if(!!filters.sortNotifyAt, (q) => q.orderBy("notifyAt", filters.sortNotifyAt as "asc" | "desc"))
-        .$if(!!filters.limit, (q) => q.limit(filters.limit as number))
-        .$if(!!filters.offset, (q) => q.offset(filters.offset as number));
+    if (filters.search) {
+        query = query.where("title", "ilike", `%${filters.search}%`);
+    }
+
+    if (typeof filters.isCompleted === "boolean") {
+        query = query.where("isCompleted", "=", filters.isCompleted);
+    }
+
+    if (filters.sortBy && filters.sortOrder) {
+        query = query.orderBy(filters.sortBy, filters.sortOrder);
+    }
+
+    query = query.limit(filters.limit).offset(filters.offset);
 
     return await query.execute();
 }

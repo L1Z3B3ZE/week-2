@@ -1,7 +1,8 @@
-import type { FastifySchema } from "fastify";
+import { FastifySchema } from "fastify";
 import { z } from "zod";
 
 const SortOrders = z.enum(["asc", "desc"]);
+const SortFields = z.enum(["title", "createdAt", "notifyAt"]);
 
 const schema = z.object({
     search: z.string().optional(),
@@ -10,12 +11,10 @@ const schema = z.object({
         if (value === "false") return false;
         return undefined;
     }, z.boolean().optional()),
-    sortTitle: SortOrders.optional(),
-    sortCreatedAt: SortOrders.optional(),
-    sortNotifyAt: SortOrders.optional(),
-    order: SortOrders.optional(),
-    limit: z.preprocess((value) => (typeof value === "string" ? parseInt(value, 10) : value), z.number().optional()),
-    offset: z.preprocess((value) => (typeof value === "string" ? parseInt(value, 10) : value), z.number().optional()),
+    sortBy: SortFields.optional(),
+    sortOrder: SortOrders.optional(),
+    limit: z.coerce.number().min(1),
+    offset: z.coerce.number().min(0),
 });
 
 export type getAllObjectivesSchema = z.infer<typeof schema>;

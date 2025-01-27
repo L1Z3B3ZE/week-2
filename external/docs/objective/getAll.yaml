@@ -6,12 +6,10 @@
       security:
         - bearer: [ ]
       parameters:
-        - name: sortCreatedAt
-          $ref: "#/definitions/sortCreatedAt"
-        - name: sortNotifyAt
-          $ref: "#/definitions/sortNotifyAt"
-        - name: sortTitle
-          $ref: "#/definitions/sortTitle"
+        - name: sortBy
+          $ref: "#/definitions/sortBy"
+        - name: sortOrder
+          $ref: "#/definitions/sortOrder"
         - name: search
           in: query
           description: Search term to filter objectives by title
