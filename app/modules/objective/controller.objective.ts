@@ -8,96 +8,29 @@ import { getAllObjectivesSchema } from "./schemas/get-all-objectives.schema";
 import { uuidObjectiveSchema } from "./schemas/validUUID.schema";
 
 export async function create(req: FastifyRequest<{ Body: createObjectiveSchema }>, rep: FastifyReply) {
-    if (!req.user?.id) {
-        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
-            message: "Пользователь не авторизован"
-        });
-    }
-
     const newObjective = {
         ...req.body,
-        creatorid: req.user.id
+        creatorid: req.user.id!
     };
 
-    try {
-        const insertedObjective = await objectiveRepository.insert(sqlCon, newObjective);
-        return rep.code(HttpStatusCode.OK).send(insertedObjective);
-    } catch (error) {
-        console.error("Ошибка создания задачи:", error);
-        return rep.code(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
-            message: "При создании задачи произошла ошибка"
-        });
-    }
+    const insertedObjective = await objectiveRepository.insert(sqlCon, newObjective);
+    return rep.code(HttpStatusCode.OK).send(insertedObjective);
 }
 
 export async function update(req: FastifyRequest<{ Body: updateObjectiveSchema; Params: uuidObjectiveSchema }>, rep: FastifyReply) {
     const { id } = req.params;
-    if (!req.user?.id) {
-        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
-            message: "Пользователь не авторизован"
-        });
-    }
-    try {
-        const objective = await objectiveRepository.getById(sqlCon, id);
-        if (objective.creatorid !== req.user.id) {
-            return rep.code(HttpStatusCode.FORBIDDEN).send({
-                message: "У вас нет доступа к этой задаче"
-            });
-        }
-        if (!objective) {
-            return rep.code(HttpStatusCode.NOT_FOUND).send({
-                message: "Задача с таким ID не найдена"
-            });
-        }
-        const updatedObjective = await objectiveRepository.update(sqlCon, id, req.body);
-        return rep.code(HttpStatusCode.OK).send({ ...updatedObjective });
-    } catch (error) {
-        console.error("Ошибка при редактировании задачи:", error);
-        return rep.code(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
-            message: "Произошла ошибка при редактировании задачи"
-        });
-    }
+
+    const updatedObjective = await objectiveRepository.update(sqlCon, id, req.body);
+    return rep.code(HttpStatusCode.OK).send({ ...updatedObjective });
 }
 
 export async function getOne(req: FastifyRequest<{ Params: uuidObjectiveSchema }>, rep: FastifyReply) {
-    if (!req.user?.id) {
-        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
-            message: "Пользователь не авторизован"
-        });
-    }
-
-    try {
-        const objective = await objectiveRepository.getById(sqlCon, req.params.id);
-
-        if (objective.creatorid !== req.user.id) {
-            return rep.code(HttpStatusCode.FORBIDDEN).send({
-                message: "У вас нет доступа к этой задаче"
-            });
-        }
-
-        return rep.code(HttpStatusCode.OK).send(objective);
-    } catch (error) {
-        return rep.code(HttpStatusCode.NOT_FOUND).send({
-            message: "Задача с таким ID не найдена"
-        });
-    }
+    const objective = await objectiveRepository.getById(sqlCon, req.params.id);
+    return rep.code(HttpStatusCode.OK).send(objective);
 }
 
 export async function getAll(req: FastifyRequest<{ Querystring: getAllObjectivesSchema }>, rep: FastifyReply) {
-    if (!req.user?.id) {
-        return rep.code(HttpStatusCode.UNAUTHORIZED).send({
-            message: "Пользователь не авторизован"
-        });
-    }
+    const objectives = await objectiveRepository.getAll(sqlCon, req.user.id!, req.query);
 
-    try {
-        const objectives = await objectiveRepository.getAll(sqlCon, req.user.id, req.query);
-
-        return rep.code(HttpStatusCode.OK).send(objectives);
-    } catch (error) {
-        console.error("Ошибка при получении списка задач:", error);
-        return rep.code(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
-            message: "Произошла ошибка при получении задач"
-        });
-    }
+    return rep.code(HttpStatusCode.OK).send(objectives);
 }

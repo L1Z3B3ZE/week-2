@@ -19,7 +19,7 @@ export async function update(con: Kysely<DB> | Transaction<DB>, id: string, sche
 }
 
 export async function getById(con: Kysely<DB> | Transaction<DB>, id: string) {
-    return await con.selectFrom("objectives").selectAll().where("id", "=", id).executeTakeFirstOrThrow();
+    return await con.selectFrom("objectives").selectAll().where("id", "=", id).executeTakeFirst();
 }
 
 export async function getAll(con: Kysely<DB> | Transaction<DB>, userId: string, filters: getAllObjectivesSchema) {

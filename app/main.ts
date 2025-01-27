@@ -10,6 +10,7 @@ import { logger } from "./common/config/pino-plugin";
 import { AppErrorPipe, ZodValidatorCompiler } from "./common/config/pipe";
 import { swaggerOption, swaggerUiOption } from "./common/config/swagger";
 import { HttpProvider } from "./modules/_index";
+import { fastifyAuth } from '@fastify/auth';
 
 async function app() {
     const app: FastifyInstance = fastify();
@@ -29,6 +30,7 @@ async function app() {
     app.register(fastifySwaggerUi, swaggerUiOption);
     await app.register(KyselyConfig);
     await app.register(fastifyJwt, jwtOption);
+    await app.register(fastifyAuth);
     await globalAuthHook(app);
 
     HttpProvider.forEach((router) => app.register(router.instance, { prefix: router.prefix }));
