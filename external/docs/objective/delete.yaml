@@ -1,0 +1,26 @@
+/to-do/{id}:
+  delete:
+    tags:
+      - Objectives
+    summary: Delete objective
+    security:
+      - bearer: [ ]
+    parameters:
+      - $ref: "#/definitions/uuid-param"
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Задача успешно удалена"
+      404:
+        $ref: "#/definitions/404"
+      401:
+        $ref: "#/definitions/401"
+      403:
+        $ref: "#/definitions/403"

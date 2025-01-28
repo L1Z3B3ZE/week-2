@@ -21,6 +21,10 @@ export async function getById(con: Kysely<DB> | Transaction<DB>, id: string) {
     return await con.selectFrom("objectives").selectAll().where("id", "=", id).executeTakeFirst();
 }
 
+export async function deleteById(con: Kysely<DB> | Transaction<DB>, id: string) {
+    return await con.deleteFrom("objectives").where("id", "=", id).execute();
+}
+
 export async function getAll(con: Kysely<DB> | Transaction<DB>, userId: string, filters: getAllObjectivesSchema) {
     let query = con.selectFrom("objectives").selectAll().where("creatorid", "=", userId);
 

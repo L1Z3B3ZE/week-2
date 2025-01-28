@@ -29,6 +29,15 @@ export async function getOne(req: FastifyRequest<{ Params: uuidObjectiveSchema }
     return rep.code(HttpStatusCode.OK).send(objective);
 }
 
+export async function deleteObjective(req: FastifyRequest<{ Params: uuidObjectiveSchema }>, rep: FastifyReply) {
+    const { id } = req.params;
+    await objectiveRepository.deleteById(sqlCon, id);
+
+    return rep.code(HttpStatusCode.OK).send({
+        message: "Задача успешно удалена"
+    });
+}
+
 export async function getAll(req: FastifyRequest<{ Querystring: getAllObjectivesSchema }>, rep: FastifyReply) {
     const objectives = await objectiveRepository.getAll(sqlCon, req.user.id!, req.query);
 
