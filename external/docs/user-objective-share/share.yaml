@@ -1,0 +1,88 @@
+/to-do/{id}/share:
+  post:
+    tags:
+      - User-Objective-Shares
+    summary: Share access to an objective
+    security:
+      - bearer: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: UUID of the objective
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [users]
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+    responses:
+      "200":
+        description: Access successfully granted
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Доступ успешно выдан"
+                users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      login:
+                        type: string
+                objective:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    title:
+                      type: string
+                      minLength: 1
+                      maxLength: 127
+                    description:
+                      type: string
+                      nullable: true
+                    notifyAt:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+                    isCompleted:
+                      type: boolean
+                      default: false
+      "401":
+        $ref: "#/definitions/401"
+      "403":
+        $ref: "#/definitions/403"
+      404:
+        $ref: "#/definitions/404"
+      409:
+        $ref: "#/definitions/409"

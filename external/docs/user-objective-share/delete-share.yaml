@@ -1,0 +1,55 @@
+/to-do/{id}/revoke:
+  delete:
+    tags:
+      - User-Objective-Shares
+    summary: Revoke access to an objective
+    security:
+      - bearer: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: UUID of the objective
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [users]
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+    responses:
+      "200":
+        description: Access successfully revoked
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Доступ успешно отозван"
+                revokedUsers:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      "401":
+        $ref: "#/definitions/401"
+      "403":
+        $ref: "#/definitions/403"
+      404:
+        $ref: "#/definitions/404"
+      409:
+        $ref: "#/definitions/409"

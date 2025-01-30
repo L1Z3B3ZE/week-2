@@ -1,0 +1,66 @@
+/to-do/{id}/list-grants:
+  get:
+    tags:
+      - User-Objective-Shares
+    summary: Get list of users with access to an objective
+    security:
+      - bearer: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: UUID of the objective
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "200":
+        description: List of users with access
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                objective:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    creatorId:
+                      type: string
+                      format: uuid
+                    notifyAt:
+                      type: string
+                      format: date-time
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+                    isCompleted:
+                      type: boolean
+                      example: false
+                users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      login:
+                        type: string
+      "401":
+        $ref: "#/definitions/401"
+      "403":
+        $ref: "#/definitions/403"
+      404:
+        $ref: "#/definitions/404"
