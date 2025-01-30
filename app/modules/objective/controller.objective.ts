@@ -21,7 +21,7 @@ export async function update(req: FastifyRequest<{ Body: updateObjectiveSchema; 
     const { id } = req.params;
 
     const updatedObjective = await objectiveRepository.update(sqlCon, id, req.body);
-    return rep.code(HttpStatusCode.OK).send({ ...updatedObjective });
+    return rep.code(HttpStatusCode.OK).send({ updatedObjective });
 }
 
 export async function getOne(req: FastifyRequest<{ Params: uuidObjectiveSchema }>, rep: FastifyReply) {

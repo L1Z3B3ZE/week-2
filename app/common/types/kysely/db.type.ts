@@ -40,5 +40,5 @@ export interface UserObjectiveShares {
 export interface DB {
   users: Users;
   objectives: Objectives;
-  userObjectiveShares: UserObjectiveShares;
+  "user-objective-shares": UserObjectiveShares;
 }

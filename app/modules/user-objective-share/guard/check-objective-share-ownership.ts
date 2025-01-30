@@ -1,12 +1,12 @@
 import { FastifyRequest } from "fastify";
 import { sqlCon } from "../../../common/config/kysely-config";
 import { HttpStatusCode } from "../../../common/enum/http-status-code";
-import * as objectiveRepository from "../repository.objective";
 import { CustomException } from "../../../common/exceptions/custom-exception";
+import * as objectiveRepository from "../../objective/repository.objective";
+import * as userObjectiveShareRepository from "../repository.user-objective-share";
 
-export const checkOwnership = async (req: FastifyRequest<{ Params: { id: string } }>) => {
+export const checkShareOwnership = async (req: FastifyRequest<{ Params: { id: string } }>) => {
     const { id } = req.params;
-    const userId = req.user?.id;
 
     const objective = await objectiveRepository.getById(sqlCon, id);
 
@@ -16,9 +16,9 @@ export const checkOwnership = async (req: FastifyRequest<{ Params: { id: string 
         });
     }
 
-    if (objective.creatorid !== userId) {
+    if (!(await userObjectiveShareRepository.findShareByUserAndObjectiveIds(sqlCon, req.user.id!, objective.id))) {
         throw new CustomException(HttpStatusCode.FORBIDDEN, "Доступ отклонен", {
-            publicMessage: "У вас нет доступа к этой задаче"
+            publicMessage: { message: "У вас нет доступа к этой задаче" }
         });
     }
 };
