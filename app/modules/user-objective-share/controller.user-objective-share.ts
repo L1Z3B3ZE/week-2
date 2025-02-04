@@ -32,19 +32,19 @@ export async function share(req: FastifyRequest<IUserObjectiveShareFSchema>, rep
         });
     }
 
-    const foundUsers = [];
-    for (const userId of userIdentificators) {
-        try {
-            const foundUser = await userRepository.getById(sqlCon, userId);
-            foundUsers.push(foundUser);
-        } catch {
-            return rep.code(HttpStatusCode.NOT_FOUND).send({ message: `Пользователь ${userId} не найден` });
-        }
+    const foundUsers = await userRepository.getByIds(sqlCon, userIdentificators);
+    const foundUserIds = foundUsers.map((user) => user.id);
+
+    const missingUserIds = userIdentificators.filter((id) => !foundUserIds.includes(id));
+    if (missingUserIds.length > 0) {
+        return rep.code(HttpStatusCode.NOT_FOUND).send({
+            message: `Пользователи не найдены: ${missingUserIds.join(", ")}`
+        });
     }
 
-    for (const user of foundUsers) {
-        await userObjectiveShareRepository.insert(sqlCon, { userId: user.id, objectiveId });
-    }
+    const newShares = foundUsers.map((user) => ({ userId: user.id, objectiveId }));
+
+    await userObjectiveShareRepository.insert(sqlCon, newShares);
 
     for (const user of foundUsers) {
         await sendMail({

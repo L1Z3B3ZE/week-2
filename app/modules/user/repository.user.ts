@@ -14,3 +14,7 @@ export async function getByEmail(con: Kysely<DB>, email: string) {
 export async function getById(con: Kysely<DB> | Transaction<DB>, id: string) {
     return await con.selectFrom("users").selectAll().where("id", "=", id).executeTakeFirstOrThrow();
 }
+
+export async function getByIds(con: Kysely<DB>, ids: string[]) {
+    return await con.selectFrom("users").selectAll().where("id", "in", ids).execute();
+}
