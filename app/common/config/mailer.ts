@@ -1,13 +1,10 @@
 import nodemailer from "nodemailer";
-import { z } from "zod";
 
-const emailSchema = z.object({
-    to: z.string().email(),
-    subject: z.string().min(1),
-    text: z.string().optional()
-});
-
-export type EmailOptions = z.infer<typeof emailSchema>;
+type EmailOptionsType = {
+    to: string;
+    subject: string;
+    text?: string;
+};
 
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -19,15 +16,13 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export async function sendMail(options: EmailOptions) {
-    const validatedOptions = emailSchema.parse(options);
-
+export async function sendMail(options: EmailOptionsType) {
     try {
         await transporter.sendMail({
             from: process.env.MAIL_FROM,
-            to: validatedOptions.to,
-            subject: validatedOptions.subject,
-            text: validatedOptions.text
+            to: options.to,
+            subject: options.subject,
+            text: options.text
         });
         return { message: "Email отправлен успешно" };
     } catch {
